@@ -1,35 +1,23 @@
+
 #include <iostream>
-#include <string>
 using namespace std;
-
-class Car
-{
-public:
-    string brand;
-    int year;
-
-    void display()
+class substract
+{public:
+    int* sub(int* n1,int* n2)
     {
-        cout << "Brand: " << brand << endl;
-        cout << "Year: " << year << endl;
+      int *p=new int(*n1-*n2);
+      return p;
     }
 };
-
 int main()
 {
-    Car c1;
-
-    c1.brand = "Toyota";
-    c1.year = 2022;
-
-    c1.display();
-
-    cout << "\nUsing pointer to access members:" << endl;
-
-    Car* ptr = &c1;
-
-    cout << "Brand: " << ptr->brand << endl;
-    cout << "Year: " << ptr->year << endl;
-
-    return 0;
+  int *n1=new int(10),*n2=new int(5);
+  substract s1;
+    
+  int* result=s1.sub(n1,n2);
+  cout << "result = " << *result << endl;
+  delete result;
+  delete n1;
+  delete n2;
+  return 0;
 }
