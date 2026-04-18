@@ -1,0 +1,154 @@
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int data;
+    bool color;
+    Node *left, *right, *parent;
+
+    Node(int data) {
+        this->data = data;
+        left = right = parent = NULL;
+        color = 1;
+    }
+};
+
+class RBTree {
+private:
+    Node* root;
+
+    void leftRotate(Node* x) {
+        Node* y = x->right;
+        x->right = y->left;
+
+        if (y->left != NULL)
+            y->left->parent = x;
+
+        y->parent = x->parent;
+
+        if (x->parent == NULL)
+            root = y;
+        else if (x == x->parent->left)
+            x->parent->left = y;
+        else
+            x->parent->right = y;
+
+        y->left = x;
+        x->parent = y;
+    }
+
+    void rightRotate(Node* x) {
+        Node* y = x->left;
+        x->left = y->right;
+
+        if (y->right != NULL)
+            y->right->parent = x;
+
+        y->parent = x->parent;
+
+        if (x->parent == NULL)
+            root = y;
+        else if (x == x->parent->right)
+            x->parent->right = y;
+        else
+            x->parent->left = y;
+
+        y->right = x;
+        x->parent = y;
+    }
+
+    void fixInsert(Node* k) {
+        Node* u;
+        while (k->parent != NULL && k->parent->color == 1) {
+            if (k->parent == k->parent->parent->right) {
+                u = k->parent->parent->left;
+
+                if (u != NULL && u->color == 1) {
+                    u->color = 0;
+                    k->parent->color = 0;
+                    k->parent->parent->color = 1;
+                    k = k->parent->parent;
+                } else {
+                    if (k == k->parent->left) {
+                        k = k->parent;
+                        rightRotate(k);
+                    }
+                    k->parent->color = 0;
+                    k->parent->parent->color = 1;
+                    leftRotate(k->parent->parent);
+                }
+            } else {
+                u = k->parent->parent->right;
+
+                if (u != NULL && u->color == 1) {
+                    u->color = 0;
+                    k->parent->color = 0;
+                    k->parent->parent->color = 1;
+                    k = k->parent->parent;
+                } else {
+                    if (k == k->parent->right) {
+                        k = k->parent;
+                        leftRotate(k);
+                    }
+                    k->parent->color = 0;
+                    k->parent->parent->color = 1;
+                    rightRotate(k->parent->parent);
+                }
+            }
+        }
+        root->color = 0;
+    }
+
+public:
+    RBTree() { root = NULL; }
+
+    void insert(int key) {
+        Node* node = new Node(key);
+        Node* y = NULL;
+        Node* x = root;
+
+        while (x != NULL) {
+            y = x;
+            if (node->data < x->data)
+                x = x->left;
+            else
+                x = x->right;
+        }
+
+        node->parent = y;
+
+        if (y == NULL)
+            root = node;
+        else if (node->data < y->data)
+            y->left = node;
+        else
+            y->right = node;
+
+        fixInsert(node);
+    }
+
+    void inorder(Node* node) {
+        if (node != NULL) {
+            inorder(node->left);
+            cout << node->data << "(" << (node->color ? "R" : "B") << ") ";
+            inorder(node->right);
+        }
+    }
+
+    void display() {
+        inorder(root);
+    }
+};
+
+int main() {
+    RBTree tree;
+
+    tree.insert(10);
+    tree.insert(20);
+    tree.insert(30);
+    tree.insert(15);
+
+    tree.display();
+
+    return 0;
+}
